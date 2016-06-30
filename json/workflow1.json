@@ -1,0 +1,80 @@
+{
+  "id": 1,
+  "name": "workflow-create-project",
+  "displayName": "workflow-create-project",
+  "objectType": {
+    "id": 7,
+    "name": "workflow",
+    "href": "https://master.dev.nativ-systems.com/api/objectTypes/7",
+    "displayName": "Workflow",
+    "pluralName": "Workflows",
+    "userDefined": false
+  },
+  "deleted": false,
+  "href": "https://master.dev.nativ-systems.com/api/workflows/1",
+  "status": "Completed",
+  "priority": "Normal",
+  "running": false,
+  "ended": true,
+  "cancelled": false,
+  "cancelling": false,
+  "failed": false,
+  "start": "30 Jun 2016 15:02:05 +0000",
+  "end": "30 Jun 2016 15:00:09 +0000",
+  "owner": {
+    "id": 5,
+    "name": "masteruser",
+    "displayName": "masteruser masteruser",
+    "href": "https://master.dev.nativ-systems.com/api/users/5",
+    "email": "jem.rayfield@gmail.com",
+    "accountId": 4
+  },
+  "definition": {
+    "id": 12387,
+    "uuid": "06035926-2479-4f6a-bcfe-0f330d5b2815",
+    "name": "workflow-create-project",
+    "displayName": "workflow-create-project",
+    "objectType": {
+      "id": 11,
+      "name": "workflow-definition",
+      "href": "https://master.dev.nativ-systems.com/api/objectTypes/11",
+      "displayName": "Workflow Definition",
+      "pluralName": "Workflow Definitions",
+      "userDefined": false
+    },
+    "href": "https://master.dev.nativ-systems.com/api/workflowDefinitions/12387",
+    "owner": "masteruser masteruser",
+    "accountId": 4
+  },
+  "definitionVersion": 1,
+  "created": "30 Jun 2016 15:02:05 +0000",
+  "lastModified": "30 Jun 2016 15:00:09 +0000",
+  "account": {
+    "id": 4,
+    "name": "Master Account",
+    "objectType": {
+      "id": 24,
+      "name": "master-account",
+      "href": "https://master.dev.nativ-systems.com/api/objectTypes/24",
+      "displayName": "Master Account",
+      "pluralName": "Master Accounts",
+      "userDefined": false
+    },
+    "owner": "masteruser masteruser",
+    "accountId": 4
+  },
+  "workspace": {
+    "id": 3,
+    "name": "Master Account",
+    "objectType": {
+      "id": 30,
+      "name": "account-workspace",
+      "href": "https://master.dev.nativ-systems.com/api/objectTypes/30",
+      "displayName": "Account Workspace",
+      "pluralName": "Account Workspaces",
+      "userDefined": false
+    },
+    "owner": "masteruser masteruser",
+    "accountId": 4
+  }
+}

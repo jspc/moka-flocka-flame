@@ -1,0 +1,12 @@
+{
+  "id": 1,
+  "name": "workflow-create-project",
+  "displayName": "workflow-create-project",
+  "href": "/workflows/1",
+  "status": "Running",
+  "start": "30 Jun 2016 15:02:05 +0000",
+  "end": null,
+  "owner": "masteruser masteruser",
+  "accountId": 4,
+  "workspaceId": 3
+}
