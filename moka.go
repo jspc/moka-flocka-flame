@@ -23,10 +23,11 @@ var workflowStatus string
 var loginCreds string
 
 func SetHeaders(w http.ResponseWriter) (http.ResponseWriter) {
-    w.Header().Set("Access-Control-Allow-Headers", "requested-with, Content-Type, origin, authorization, accept, client-security-token")
+    w.Header().Set("Access-Control-Allow-Headers", "requested-with, Content-Type, origin, authorization, accept, client-security-token, cache-control, x-api-key")
     w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT")
     w.Header().Set("Access-Control-Allow-Origin", "*")
     w.Header().Set("Access-Control-Max-Age", "10000")
+    w.Header().Set("Cache-Control", "no-cache")
 
     w.Header().Set("Content-Type", "application/json")
 
