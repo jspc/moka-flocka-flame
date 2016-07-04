@@ -7,8 +7,14 @@ Moka Flocka Flame
 Building
 --
 
+### Linux
+```bash
+$ CGO_ENABLED=0 go build -a -installsuffix cgo moka.go
 ```
-CGO_ENABLED=0 go build -a -installsuffix cgo moka.go
+
+### Non-linux
+```bash
+$ GOOS=linux GOARCH=amd64 go build moka
 ```
 
 Docker
@@ -16,7 +22,13 @@ Docker
 
 Its a docker.
 
-```
+```bash
 $ docker build -t moka .
 $ docker run -P moka
+```
+
+It also lives/berths at quay.io.
+
+```bash
+$ docker run -P quay.io/financialtimes/moka
 ```
