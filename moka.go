@@ -3,6 +3,7 @@ package main
 import (
     "fmt"
     "io/ioutil"
+    "log"
     "net/http"
     "os"
 
@@ -10,16 +11,18 @@ import (
     "github.com/zenazn/goji/web"
 )
 
-var metadataDefinitions []byte
-var projectMetadataDefinition []byte
-var ingestMetadataDefinition []byte
-var publishMetadataDefinition []byte
+var metadataDefinitions string
+var projectMetadataDefinition string
+var ingestMetadataDefinition string
+var publishMetadataDefinition string
 
-var workflowDefinitions []byte
-var runWorkflow []byte
-var workflowStatus []byte
+var workflowDefinitions string
+var runWorkflow string
+var workflowStatus string
 
-func get_root(c web.C, w http.ResponseWriter, r *http.Request) {
+var loginCreds string
+
+func SetHeaders(w http.ResponseWriter) (http.ResponseWriter) {
     w.Header().Set("Access-Control-Allow-Headers", "requested-with, Content-Type, origin, authorization, accept, client-security-token")
     w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PUT")
     w.Header().Set("Access-Control-Allow-Origin", "*")
@@ -27,65 +30,82 @@ func get_root(c web.C, w http.ResponseWriter, r *http.Request) {
 
     w.Header().Set("Content-Type", "application/json")
 
-    name, _ := os.Hostname()
-    fmt.Fprintf(w, "{\"status\":\"Healthy!\",\"host\":\"%s\"}", name)
+    return w
 }
 
-func get_metadataDefinitions(c web.C, w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, string(metadataDefinitions))
-}
+func MetadataByID(c web.C, w http.ResponseWriter, r *http.Request) {
+    // A separate method for this, outside of moka.Router, is pure laziness
+    // - it was easier than building regexp matchers
 
-func get_metadataDefinitionID(c web.C, w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-
-    var output []byte
+    w = SetHeaders(w)
 
     switch c.URLParams["id"] {
-    case "1": output = projectMetadataDefinition
-    case "2": output = ingestMetadataDefinition
-    case "3": output = publishMetadataDefinition
+    case "1":
+        fmt.Fprintf(w, projectMetadataDefinition)
+    case "2":
+        fmt.Fprintf(w, ingestMetadataDefinition)
+    case "3":
+        fmt.Fprintf(w, publishMetadataDefinition)
+    }
+}
+
+func Status() (string) {
+    name, _ := os.Hostname()
+    return fmt.Sprintf("{\"status\":\"Healthy!\",\"host\":\"%s\"}", name)
+}
+
+func Router(c web.C, w http.ResponseWriter, r *http.Request) {
+    w = SetHeaders(w)
+
+    switch r.URL.Path {
+    case "/metadataDefinitions":
+        fmt.Fprintf(w, metadataDefinitions)
+    case "/workflowDefinitions":
+        fmt.Fprintf(w, workflowDefinitions)
+    case "/workflows":
+        fmt.Fprintf(w, runWorkflow)
+    case "/login":
+        fmt.Fprintf(w, loginCreds)
+    case "/workflows/1","/workflows/2", "/workflows/3":
+        fmt.Fprintf(w, workflowStatus)
+
+    default:
+        fmt.Fprintf(w, Status())
+    }
+}
+
+func LoadJson(f string) (string){
+    output,err := ioutil.ReadFile(f)
+    if err != nil {
+        log.Fatal(err)
     }
 
-    fmt.Fprintf(w, string(output))
+    return string(output)
 }
-
-func get_workflowDefinitions(c web.C, w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, string(workflowDefinitions))
-}
-
-func post_workflows(c web.C, w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, string(runWorkflow))
-}
-
-func get_workflow_status(c web.C, w http.ResponseWriter, r *http.Request) {
-    w.Header().Set("Content-Type", "application/json")
-    fmt.Fprintf(w, string(workflowStatus))
-}
-
 
 func main() {
-    metadataDefinitions,_ = ioutil.ReadFile("./json/metadataDefinitions.json")
-    projectMetadataDefinition ,_  = ioutil.ReadFile("./json/projectMetadataDefinition.json")
-    ingestMetadataDefinition ,_   = ioutil.ReadFile("./json/ingestMetadataDefinition.json")
-    publishMetadataDefinition ,_  = ioutil.ReadFile("./json/publishMetadataDefinition.json")
+    metadataDefinitions = LoadJson("./json/metadataDefinitions.json")
+    projectMetadataDefinition = LoadJson("./json/projectMetadataDefinition.json")
+    ingestMetadataDefinition  = LoadJson("./json/ingestMetadataDefinition.json")
+    publishMetadataDefinition = LoadJson("./json/publishMetadataDefinition.json")
 
-    workflowDefinitions,_ = ioutil.ReadFile("./json/workflowDefinitions.json")
-    runWorkflow,_ = ioutil.ReadFile("./json/runWorkflow.json")
+    workflowDefinitions = LoadJson("./json/workflowDefinitions.json")
+    runWorkflow = LoadJson("./json/runWorkflow.json")
 
+    loginCreds = LoadJson("./json/loginCreds.json")
 
-    goji.Get("/", get_root)
-    goji.Options("/*", get_root)
+    goji.Get("/", Router)
+    goji.Options("/*", Router)
 
-    goji.Get("/metadataDefinitions", get_metadataDefinitions)
-    goji.Get("/metadataDefinitions/:id/definition", get_metadataDefinitionID)
+    goji.Get("/metadataDefinitions", Router)
+    goji.Get("/metadataDefinitions/:id/definition", MetadataByID)
 
-    goji.Get("/workflowDefinitions", get_workflowDefinitions)
+    goji.Get("/workflowDefinitions", Router)
 
-    goji.Post("/workflows", post_workflows)
-    goji.Get("/workflows/:id", get_workflow_status)
+    goji.Post("/workflows", Router)
+    goji.Get("/workflows/:id", Router)
+
+    goji.Post("/login", Router)
 
     goji.Serve()
 }
